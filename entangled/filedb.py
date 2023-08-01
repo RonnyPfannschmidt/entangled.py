@@ -152,9 +152,10 @@ class FileDB:
                 del db[path]
             return db
 
-        FileDB.path().parent.mkdir(parents=True, exist_ok=True)
         data = {"version": __version__, "files": [], "source": [], "target": []}
-        json.dump(data, open(FileDB.path(), "w"))
+
+        with ensure_parent(FileDB.path()).open("w") as fp:
+            json.dump(data, fp)
         return FileDB.read()
 
 
