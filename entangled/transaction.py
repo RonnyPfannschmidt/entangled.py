@@ -112,12 +112,9 @@ class Transaction:
 
     def clear_orphans(self):
         orphans = self.db.managed - self.passed
-        if not orphans:
-            return
-
-        logging.info("orphans found: `%s`", ", ".join(map(str, orphans)))
-        for p in orphans:
-            self.actions.append(Delete(p))
+        if orphans:
+            logging.info("orphans found: `%s`", ", ".join(map(str, orphans)))
+            self.actions.extend(map(Delete, orphans))
 
     def check_conflicts(self) -> list[str]:
         return list(cat_maybes(a.conflict(self.db) for a in self.actions))
