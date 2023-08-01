@@ -7,7 +7,6 @@ import mawk
 import logging
 
 from .config import config
-from .utility import first
 from .document import TextLocation, CodeBlock, ReferenceMap, Content, PlainText
 from .properties import read_properties, get_attribute, get_classes, get_id
 from .hooks.base import HookBase
@@ -84,7 +83,7 @@ class MarkdownReader(mawk.RuleSet):
             return  # treat this as code-block content
 
         # add block to reference-map
-        language_class = first(get_classes(self.current_codeblock_properties))
+        language_class = next(get_classes(self.current_codeblock_properties), None)
         block_id = get_id(self.current_codeblock_properties)
         target_file = get_attribute(self.current_codeblock_properties, "file")
         ref_name = block_id or target_file

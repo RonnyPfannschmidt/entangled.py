@@ -3,7 +3,7 @@ properties: id, class and attribute."""
 
 from __future__ import annotations
 
-from typing import Optional, Union, ClassVar, Iterable
+from typing import Optional, Union, ClassVar, Iterable, Iterator
 from dataclasses import dataclass
 import re
 
@@ -86,7 +86,7 @@ def get_id(props: list[Property]) -> Optional[str]:
         return None
 
 
-def get_classes(props: list[Property]) -> Iterable[str]:
+def get_classes(props: list[Property]) -> Iterator[str]:
     """Get all given Classes in a property list."""
     return (p.value for p in props if isinstance(p, Class))
 
