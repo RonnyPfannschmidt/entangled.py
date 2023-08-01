@@ -144,7 +144,7 @@ class FileDB:
     def initialize() -> FileDB:
         if FileDB.path().exists():
             db = FileDB.read()
-            undead = list(filter(lambda p: not p.exists(), db.files))
+            undead = [p for p in db.files if not p.exists()]
             for path in undead:
                 logging.warning(
                     "File `%s` in DB doesn't exist. Removing entry from DB.", path
