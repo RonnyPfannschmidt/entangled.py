@@ -1,4 +1,4 @@
-from typing import Optional, Iterable
+from typing import Optional
 from dataclasses import dataclass, field
 from pathlib import Path
 from contextlib import contextmanager
