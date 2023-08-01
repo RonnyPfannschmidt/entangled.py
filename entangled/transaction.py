@@ -24,6 +24,8 @@ class Action:
         asked in case of a conflict."""
         raise NotImplementedError()
 
+    def __str__(self):
+        return f"{self.__class__.__name__.lower()} `{self.target}`"
 
 @dataclass
 class Create(Action):
@@ -43,8 +45,6 @@ class Create(Action):
         if self.sources != []:
             db.managed.add(self.target)
 
-    def __str__(self):
-        return f"create `{self.target}`"
 
 
 @dataclass
@@ -67,9 +67,6 @@ class Write(Action):
             f.write(self.content)
         db.update(self.target, self.sources)
 
-    def __str__(self):
-        return f"write `{self.target}`"
-
 
 @dataclass
 class Delete(Action):
@@ -88,9 +85,6 @@ class Delete(Action):
             parent.rmdir()
             parent = parent.parent
         del db[self.target]
-
-    def __str__(self):
-        return f"delete `{self.target}`"
 
 
 @dataclass
