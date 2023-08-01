@@ -4,7 +4,8 @@ defaults and config loaded from `entangled.toml` in the work directory.
 
 from __future__ import annotations
 
-from typing import Optional, ClassVar, TypeVar
+from collections.abc import Mapping
+from typing import Optional
 from enum import Enum
 from dataclasses import dataclass, field
 from copy import copy
@@ -67,16 +68,15 @@ class Config(threading.local):
     annotation: AnnotationMethod = AnnotationMethod.STANDARD
     use_line_directives: bool = False
     hooks: list[str] = field(default_factory=list)
-
+    language_index: Mapping[str, Language] = field(init=False)
     def __post_init__(self):
         self.languages = languages + self.languages
-        self.make_language_index()
+        self.language_index = _make_language_index(self.languages)
 
-    def make_language_index(self):
-        self.language_index = dict()
-        for l in self.languages:
-            for i in l.identifiers:
-                self.language_index[i] = l
+
+
+def _make_language_index(languages: list[Language]) -> dict[str, Language]:
+    return { identifier: lang for lang in languages for identifier in lang.identifiers }
 
 
 default = Config(Version.from_string("2.0"))
