@@ -3,9 +3,8 @@ properties: id, class and attribute."""
 
 from __future__ import annotations
 
-from typing import Optional, Union, ClassVar, Iterable, Iterator
+from typing import Optional, Union, ClassVar, Iterator
 from dataclasses import dataclass
-import re
 
 from .parsing import (
     Parser,
@@ -15,7 +14,6 @@ from .parsing import (
     matching,
     Parsable,
     starmap,
-    Failure,
 )
 
 

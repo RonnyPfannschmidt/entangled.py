@@ -117,7 +117,7 @@ class Transaction:
             self.actions.extend(map(Delete, orphans))
 
     def check_conflicts(self) -> list[str]:
-        return list(cat_maybes(a.conflict(self.db) for a in self.actions))
+        return [c for a in self.actions if (c := a.conflict(self.db)) is not None]
 
     def all_ok(self) -> bool:
         return all(a.conflict(self.db) is None for a in self.actions)

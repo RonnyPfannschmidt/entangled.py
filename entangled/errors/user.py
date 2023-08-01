@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from textwrap import wrap
 
 from ..document import TextLocation
 

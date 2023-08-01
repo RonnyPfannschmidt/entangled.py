@@ -1,6 +1,5 @@
 from typing import Optional
 from pathlib import Path
-from itertools import chain
 from threading import Event
 
 from watchdog.observers import Observer
