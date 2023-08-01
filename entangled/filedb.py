@@ -26,8 +26,7 @@ class FileStat:
     @staticmethod
     def from_path(path: Path, deps: Optional[list[Path]]):
         stat = os.stat(path)
-        with open(path, "rb") as f:
-            hash = hashlib.sha256(f.read())
+        hash = hashlib.sha256(path.read_bytes())
         return FileStat(
             path, deps, datetime.fromtimestamp(stat.st_mtime), hash.hexdigest()
         )
