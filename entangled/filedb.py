@@ -79,16 +79,17 @@ class FileDB:
 
     @staticmethod
     def path():
-        return Path(".") / ".entangled" / "filedb.json"
+        return Path(".", ".entangled", "filedb.json")
 
     @staticmethod
     def read() -> FileDB:
         logging.debug("Reading FileDB")
-        raw = json.load(open(FileDB.path()))
+        with FileDB.path().open() as fp:
+            raw = json.load(fp)
         return FileDB(
             {stat.path: stat for stat in (FileStat.from_json(r) for r in raw["files"])},
-            set(map(Path, raw["source"])),
-            set(map(Path, raw["target"])),
+            {Path(x) for x in raw["source"]},
+            {Path(x) for x in raw["target"]},
         )
 
     @property
