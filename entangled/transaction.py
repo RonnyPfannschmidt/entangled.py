@@ -5,15 +5,6 @@ from contextlib import contextmanager
 from enum import Enum
 
 import logging
-
-try:
-    import rich
-
-    WITH_RICH = True
-except ImportError:
-    WITH_RICH = False
-
-from .utility import cat_maybes
 from .filedb import FileDB, stat, file_db
 from .errors.internal import InternalError
 
