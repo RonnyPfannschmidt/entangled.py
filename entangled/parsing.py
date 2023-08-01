@@ -53,9 +53,10 @@ class Expected(Failure):
         return self.msg
 
     def __str__(self):
+        inp = self.inp
         if len(inp) > 20:
-            inp = f"{inp[:20]} ..."
-        return f'expected: {self.expected}, got: "{self.inp}"'
+            f"{inp[:20]} ..."
+        return f'expected: {self.expected}, got: "{inp}"'
 
 
 @dataclass
