@@ -1,5 +1,5 @@
 from __future__ import annotations
-from ..status import find_watch_dirs, list_input_files, list_dependent_files
+from ..status import list_input_files, list_dependent_files
 from ..config import config
 from pathlib import Path
 

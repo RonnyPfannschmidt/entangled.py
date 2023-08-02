@@ -1,19 +1,10 @@
-from typing import Optional, Iterable
+from typing import Optional
 from dataclasses import dataclass, field
 from pathlib import Path
 from contextlib import contextmanager
 from enum import Enum
 
 import logging
-
-try:
-    import rich
-
-    WITH_RICH = True
-except ImportError:
-    WITH_RICH = False
-
-from .utility import cat_maybes
 from .filedb import FileDB, stat, file_db
 from .errors.internal import InternalError
 
@@ -33,6 +24,8 @@ class Action:
         asked in case of a conflict."""
         raise NotImplementedError()
 
+    def __str__(self):
+        return f"{self.__class__.__name__.lower()} `{self.target}`"
 
 @dataclass
 class Create(Action):
@@ -52,8 +45,6 @@ class Create(Action):
         if self.sources != []:
             db.managed.add(self.target)
 
-    def __str__(self):
-        return f"create `{self.target}`"
 
 
 @dataclass
@@ -76,9 +67,6 @@ class Write(Action):
             f.write(self.content)
         db.update(self.target, self.sources)
 
-    def __str__(self):
-        return f"write `{self.target}`"
-
 
 @dataclass
 class Delete(Action):
@@ -97,9 +85,6 @@ class Delete(Action):
             parent.rmdir()
             parent = parent.parent
         del db[self.target]
-
-    def __str__(self):
-        return f"delete `{self.target}`"
 
 
 @dataclass
@@ -127,15 +112,12 @@ class Transaction:
 
     def clear_orphans(self):
         orphans = self.db.managed - self.passed
-        if not orphans:
-            return
-
-        logging.info("orphans found: `%s`", ", ".join(map(str, orphans)))
-        for p in orphans:
-            self.actions.append(Delete(p))
+        if orphans:
+            logging.info("orphans found: `%s`", ", ".join(map(str, orphans)))
+            self.actions.extend(map(Delete, orphans))
 
     def check_conflicts(self) -> list[str]:
-        return list(cat_maybes(a.conflict(self.db) for a in self.actions))
+        return [c for a in self.actions if (c := a.conflict(self.db)) is not None]
 
     def all_ok(self) -> bool:
         return all(a.conflict(self.db) is None for a in self.actions)

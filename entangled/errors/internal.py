@@ -1,6 +1,5 @@
 from typing import Any
 from dataclasses import dataclass, field
-from textwrap import wrap
 import logging
 
 
@@ -13,7 +12,9 @@ class InternalError(Exception):
         return f"Internal error: {self.msg}"
 
 
-def bug_contact():
+def bug_contact(exception: Exception) -> None:
+    import traceback
+    traceback.print_exception(exception)
     logging.error(
         "This error is due to an internal bug in Entangled. Please file an "
         "issue including the above stack trace "

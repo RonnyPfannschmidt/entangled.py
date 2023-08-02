@@ -86,7 +86,8 @@ class AnnotatedTangler(Tangler):
     def on_begin(self):
         count = "init" if self.init else str(self.ref.ref_count)
         return [
-            f"{self.cb.language.comment.open} ~/~ begin <<{self.ref.file}#{self.ref.name}>>[{count}]{self.close_comment}"
+            f"{self.cb.language.comment.open} ~/~ begin"
+            f" <<{self.ref.file}#{self.ref.name}>>[{count}]{self.close_comment}"
         ]
 
     def on_eof(self):

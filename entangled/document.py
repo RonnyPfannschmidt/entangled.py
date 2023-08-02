@@ -2,7 +2,6 @@ from typing import Union, Iterable, Any
 from dataclasses import dataclass, field
 from collections import defaultdict
 from functools import singledispatchmethod
-from itertools import chain
 
 from .config import Language, AnnotationMethod, config
 from .properties import Property, get_attribute

@@ -26,8 +26,7 @@ class FileStat:
     @staticmethod
     def from_path(path: Path, deps: Optional[list[Path]]):
         stat = os.stat(path)
-        with open(path, "rb") as f:
-            hash = hashlib.sha256(f.read())
+        hash = hashlib.sha256(path.read_bytes())
         return FileStat(
             path, deps, datetime.fromtimestamp(stat.st_mtime), hash.hexdigest()
         )
@@ -80,16 +79,17 @@ class FileDB:
 
     @staticmethod
     def path():
-        return Path(".") / ".entangled" / "filedb.json"
+        return Path(".", ".entangled", "filedb.json")
 
     @staticmethod
     def read() -> FileDB:
         logging.debug("Reading FileDB")
-        raw = json.load(open(FileDB.path()))
+        with FileDB.path().open() as fp:
+            raw = json.load(fp)
         return FileDB(
             {stat.path: stat for stat in (FileStat.from_json(r) for r in raw["files"])},
-            set(map(Path, raw["source"])),
-            set(map(Path, raw["target"])),
+            {Path(x) for x in raw["source"]},
+            {Path(x) for x in raw["target"]},
         )
 
     @property
@@ -144,7 +144,7 @@ class FileDB:
     def initialize() -> FileDB:
         if FileDB.path().exists():
             db = FileDB.read()
-            undead = list(filter(lambda p: not p.exists(), db.files))
+            undead = [p for p in db.files if not p.exists()]
             for path in undead:
                 logging.warning(
                     "File `%s` in DB doesn't exist. Removing entry from DB.", path
@@ -152,9 +152,10 @@ class FileDB:
                 del db[path]
             return db
 
-        FileDB.path().parent.mkdir(parents=True, exist_ok=True)
         data = {"version": __version__, "files": [], "source": [], "target": []}
-        json.dump(data, open(FileDB.path(), "w"))
+
+        with ensure_parent(FileDB.path()).open("w") as fp:
+            json.dump(data, fp)
         return FileDB.read()
 
 
